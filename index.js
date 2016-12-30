@@ -134,8 +134,15 @@ module.exports = {
     if (type === 'test-body-footer') {
       return "\
         <script> \
-          require('ember-percy/native-xhr')['default'](); \
-          require('ember-percy/finalize')['default'](); \
+          function checkRequire() { \
+            if (typeof require !== 'undefined') { \
+              require('ember-percy/native-xhr')['default'](); \
+              require('ember-percy/finalize')['default'](); \
+            } else { \
+              setTimeout(checkRequire, 100); \
+            } \
+          } \
+          checkRequire(); \
         </script> \
       ";
     }
